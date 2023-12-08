@@ -12,5 +12,7 @@ public final class Constants {
         public static final int driveFrontRight = 2;
         public static final int driveBackLeft = 3;
         public static final int driveBackRight = 4;
+        public static final int flyWheelMotorID = 5;
+        public static final int paddleMotorID = 7;
     }
 }
