@@ -1,4 +1,4 @@
-  // Copyright (c) FIRST and other WPILib contributors.
+// Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
@@ -18,92 +18,120 @@ import frc.robot.Constants.MotorIDs;
 public class Shooter extends SubsystemBase {
   /** Creates a new Shooter. */
 
-   public static final double FlyWheelChainGearRatio = 24.0 / 42.0; // need to change
-   public static final int FlyWheelUnitsPerFXRotation = 2048;
-            public static final double RPM = FlyWheelChainGearRatio / 60.0 * FlyWheelUnitsPerFXRotation / 10.0;
-            public static final double DefaultFlyWheelVelocity = 4500 * RPM; // * RPM
+  public static final double FlyWheelChainGearRatio = 24.0 / 42.0; // need to change
+  public static final int FlyWheelUnitsPerFXRotation = 2048;
+  public static final double RPM = FlyWheelChainGearRatio / 60.0 * FlyWheelUnitsPerFXRotation / 10.0;
+  public static final double DefaultFlyWheelVelocity = 4500 * RPM; // * RPM
 
-            public static final double PaddlePercentOutput = 0.7;
- 
-          
-   WPI_TalonFX flyWheelMotor; 
-   WPI_TalonSRX paddleMotor;
+  public static final double PaddlePercentOutput = 0.7;
 
-   DigitalInput hallEffect;
+  WPI_TalonFX flyWheelMotor;
+  WPI_TalonSRX paddleMotor;
 
-public enum ShooterState{ Stopped, SpinningUpFlyWheel, AdvancePaddle, IndexingPaddle};
-ShooterState shooterState = ShooterState.Stopped;
+  DigitalInput hallEffect;
+
+  public enum ShooterState {
+    Stopped, SpinningUpFlyWheel, AdvancePaddle, IndexingPaddle
+  };
+
+  ShooterState shooterState = ShooterState.Stopped;
 
   public Shooter() {
-   flyWheelMotor = new WPI_TalonFX(Constants.MotorIDs.flyWheelMotorID);
-   paddleMotor = new WPI_TalonSRX(Constants.MotorIDs.paddleMotorID);
-   
+    flyWheelMotor = new WPI_TalonFX(Constants.MotorIDs.flyWheelMotorID);
+    paddleMotor = new WPI_TalonSRX(Constants.MotorIDs.paddleMotorID);
+
   }
 
-@Override
+  @Override
   public void periodic() {
+    manageShooterState();
     // This method will be called once per scheduler run
   }
 
   public void manageShooterState() {
-   switch(shooterState){
-    
-    case Stopped:   
-    stopFlyWheel();
-    stopPaddle();
-    break;
-   
-    case AdvancePaddle:
-    startPaddle();
-    break;
-    
-    case SpinningUpFlyWheel: 
-    startFlywheel();
-    if (isFlyWheelUpToSpeed()){
-      shooterState = ShooterState.AdvancePaddle;
+    switch (shooterState) {
+
+      case Stopped:
+        stopFlyWheel();
+        stopPaddle();
+        break;
+
+      case SpinningUpFlyWheel:
+        if (isFlyWheelUpToSpeed()) {
+          shooterState = ShooterState.AdvancePaddle;
+        }
+        //add button binding code
+        break;
+
+      case AdvancePaddle:
+        startPaddle();
+        if (isFlyWheelUpToSpeed()) {
+          shooterState = ShooterState.SpinningUpFlyWheel; 
+        }
+        else if (()) {
+          shooterState = ShooterState.IndexingPaddle;
+        }
+        // add button binding code
+        break;
+
+      case IndexingPaddle:
+        startPaddle();
+        if(isIndexed()) {
+          shooterState = ShooterState.Stopped; 
+        }
+
+        break;
+
     }
-    break;
-    
-    case IndexingPaddle:
-    startPaddle();
-    
-    break;
-    
-   }
   }
-  
+  public void startShooter(){
+    if (shooterState != ShooterState.IndexingPaddle) {
+      shooterState = ShooterState.SpinningUpFlyWheel;
+    }
+  }
+public void stopShooter(){
+  if (shooterState == ShooterState.SpinningUpFlyWheel) {
+      shooterState = ShooterState.Stopped; 
+  } else if (shooterState == ShooterState.AdvancePaddle) {
+    shooterState = ShooterState.IndexingPaddle; 
+  } else {
+    shooterState = ShooterState.Stopped;
+  }
+}
+
   public void startFlywheel() {
     flyWheelMotor.set(TalonFXControlMode.Velocity, DefaultFlyWheelVelocity);
-     
-    
-   }
 
-public void startPaddle(){
-  paddleMotor.set(TalonSRXControlMode.PercentOutput, PaddlePercentOutput);
-
-  //Fix value of paddle motor
-}
-
-public void stopFlyWheel(){
-  flyWheelMotor.set(TalonFXControlMode.Velocity, 0);
-
-}
-  public void stopPaddle(){  
-   paddleMotor.set(TalonSRXControlMode.PercentOutput, 0);
-   
   }
-public double getFlyWheelMotorVelocity(){
-  return flyWheelMotor.getSelectedSensorVelocity();
 
-}
+  public void startPaddle() {
+    paddleMotor.set(TalonSRXControlMode.PercentOutput, PaddlePercentOutput);
 
-  public boolean isFlyWheelUpToSpeed(){
-    return (getFlyWheelMotorVelocity() *.95 >=DefaultFlyWheelVelocity);
-  
+    // Fix value of paddle motor
   }
-  
+
+  public void stopFlyWheel() {
+    flyWheelMotor.set(TalonFXControlMode.Velocity, 0);
+
+  }
+
+  public void stopPaddle() {
+    paddleMotor.set(TalonSRXControlMode.PercentOutput, 0);
+
+  }
+
+  public double getFlyWheelMotorVelocity() {
+    return flyWheelMotor.getSelectedSensorVelocity();
+
+  }
+
+  public boolean isFlyWheelUpToSpeed() {
+    return (getFlyWheelMotorVelocity() * .95 >= DefaultFlyWheelVelocity);
+
+  }
+
   public boolean isIndexed() {
     return !hallEffect.get();
   }
-  
+
 }
