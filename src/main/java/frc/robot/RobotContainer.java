@@ -11,25 +11,45 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DriveRobot;
 import frc.robot.commands.InstrumentedSequentialCommandGroup;
+import frc.robot.commands.StartFlyWheel;
+import frc.robot.commands.StartShooter;
+import frc.robot.commands.StopFlyWheel;
+import frc.robot.commands.StopShooter;
 import frc.robot.subsystems.Drive;
+import frc.robot.subsystems.Shooter;
 
 
 public class RobotContainer {
 
         /* Subsystems */
         public final Drive driveSub = new Drive();
+        public final Shooter shooterSub = new Shooter();
+        
+        /* Comds */
+        /**
+         *
+         */
+        public StartFlyWheel startFlyWheelCmd = new StartFlyWheel(shooterSub);
+        public StopFlyWheel StopFlyWheelCmd = new StopFlyWheel(shooterSub);
+        public StopShooter stopShooterCmd = new StopShooter(shooterSub);
+        public StartShooter startShooterCmd = new StartShooter(shooterSub);
 
+        
         /* Controllers */
         public Joystick driverController; // Joystick 1
         public Joystick operatorButtonController; // Joystick 2
         public Joystick operatorAxisController; // Joystick 3
 
+        
         /* Buttons */
-        public Trigger toggleTargetButton;
-        public Trigger autoAlignButton;
+        public JoystickButton toggleTargetButton;
+        public JoystickButton autoAlignButton;
+        public JoystickButton flyWheelButton;
+        public JoystickButton shooterButton;
 
         /* Drive & Arm Movement */
         public int throttleJoystickID;
@@ -61,6 +81,13 @@ public class RobotContainer {
         private void configureButtonBindings() {
                 driverController = new Joystick(1);
                 operatorButtonController = new Joystick(2);
+                
+                flyWheelButton = new JoystickButton(operatorButtonController, Constants.LogitechDualAction.LeftTrigger);
+                shooterButton = new JoystickButton(operatorButtonController, Constants.LogitechDualAction.RightTrigger);
+
+                flyWheelButton.onTrue(startFlyWheelCmd).onFalse(StopFlyWheelCmd);
+                shooterButton.onTrue(startShooterCmd).onFalse(stopShooterCmd);
+
         }
 
         private void buildAutoOptions() {

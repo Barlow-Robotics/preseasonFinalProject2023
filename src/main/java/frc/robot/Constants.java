@@ -15,4 +15,9 @@ public final class Constants {
         public static final int flyWheelMotorID = 5;
         public static final int paddleMotorID = 7;
     }
+
+    public final class LogitechDualAction {
+        public static final int RightTrigger = 8;
+        public static final int LeftTrigger = 7;
+    }
 }

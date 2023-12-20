@@ -34,6 +34,7 @@ public class Shooter extends SubsystemBase {
     Stopped, SpinningUpFlyWheel, AdvancePaddle, IndexingPaddle
   };
 
+
   ShooterState shooterState = ShooterState.Stopped;
 
   public Shooter() {

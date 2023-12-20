@@ -65,7 +65,7 @@ public class Robot extends LoggedRobot {
             new PowerDistribution(1, ModuleType.kRev); // Enables power distribution logging
         } else {
             // setUseTiming(false); // Run as fast as possible
-            // String logPath = LogFileUtil.findReplayLog(); // Pull the replay log from AdvantageScope (or prompt the user)
+            // Stringf logPath = LogFileUtil.findReplayLog(); // Pull the replay log from AdvantageScope (or prompt the user)
             logger.addDataReceiver(new WPILOGWriter(""));
             logger.addDataReceiver(new NT4Publisher());
         }
@@ -160,7 +160,7 @@ public class Robot extends LoggedRobot {
 
     static public void reportCommandFinish(Command c) {
         if (startTimes.containsKey(c)) {
-            long currentTime = System.currentTimeMillis();
+            long  currentTime = System.currentTimeMillis();
             double deltaTime = ((double) currentTime - startTime) / 1000.0;
             double elapsedTime = (double) (currentTime - startTimes.get(c)) / 1000.0;
             System.out.println(deltaTime + ": Finished (elapsed time " + elapsedTime + ")" + c.getName());
